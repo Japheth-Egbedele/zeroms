@@ -1,0 +1,54 @@
+# ZeroMs (0ms) — Cursor Rules
+
+## Project
+Terminal-style typing speed app for CS students and developers.
+Stack: Next.js 14 App Router · Tailwind CSS · Zustand · Supabase (@supabase/ssr) · Vercel · TypeScript strict mode
+
+## Design — Non-Negotiable
+- Font: JetBrains Mono only (next/font/google)
+- Background: #0a0a0a
+- Correct chars / primary text: #00ff41
+- Error chars: Tailwind red-500
+- Untyped chars: Tailwind zinc-600
+- NEVER add: cards, box shadows on containers, borders on layout, navbars, footers, modals, toasts
+- The UI must feel like a ZSH terminal, not a website
+
+## Component Rules
+- Default to server components. Add 'use client' only for hooks, browser APIs, or event handlers.
+- No business logic inside components. All calculations live in lib/. Components only read state and render.
+- CharacterMap.tsx must always use useMemo — never re-render the full char array without it.
+- TypingEngine.tsx is the only file that touches keyboard events.
+- Hidden input: position absolute, opacity 0, width 1px, height 1px, pointerEvents none.
+
+## File Ownership
+- lib/ — pure functions only. No store imports, no React imports.
+- store/ — Zustand only. No component imports.
+- components/ — rendering only. Reads from store or props. No calculations.
+- app/api/ — route handlers and edge functions only.
+- docs/ — markdown documentation only.
+
+## Supabase Rules
+- Browser client: createBrowserClient from @supabase/ssr
+- Server client: createServerClient + cookies from next/headers
+- SUPABASE_SERVICE_ROLE_KEY is server-only. It must never appear in any 'use client' file or be passed to the browser.
+- Score inserts only happen inside app/api/verify-score/route.ts using the service role key.
+- All other DB reads use the anon key with RLS enforced.
+
+## Anti-Cheat Rules
+- The client never writes directly to the leaderboard table.
+- All score submission goes through POST /api/verify-score.
+- Never expose which anti-cheat check failed in any API response body.
+- Shadow ban silently: is_shadowed: true. The user always sees { success: true }.
+
+## Editing Behaviour
+- Touch only the files and functions named in the prompt.
+- Do not refactor unrelated code.
+- Do not add new npm packages without being explicitly asked.
+- Do not add explanatory comments unless asked.
+- If the prompt is ambiguous, ask one clarifying question before writing code.
+
+## Performance Rules
+- CharacterMap useMemo dependency array: [chars, currentIndex, errors] only.
+- No async operations inside handleKeystroke — the hot path must be synchronous.
+- wpmTimeline and ConsistencyGraph updates happen at most once per second / per keystroke respectively, never more.
+- Typing engine latency is the highest priority in the entire codebase. Nothing can make the input feel sluggish.

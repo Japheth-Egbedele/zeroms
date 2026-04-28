@@ -1,33 +1,66 @@
-# Typing-Speed-Tester
-For testing how fast you can type a given word.
-Feature	Old Version	Anti-Cheat v2
-Paste / Voice / Burst Detection	✅ Basic	✅ More sensitive and adaptive
-Drag-Drop Blocking	❌ Missing	✅ Added
-Right-Click & Shortcuts	✅ Partial	✅ Full
-Keystroke Rhythm	❌ None	✅ Detects bots / automation
-Repeated Lockout	✅ Temporary	✅ Smarter reset system
-Modularity	❌ Hardcoded	✅ Separated, upgradable
-WPM calculation system 
-⚖️ 2️⃣ Levenshtein Distance (Edit Distance) Accuracy
+# 0ms — Terminal Typing for Engineers
 
-Measures how many edits (insertions, deletions, substitutions) are needed to turn the user’s text into the target.
+> The Holy Grail of typing: zero latency, zero errors.
 
-accuracy = ((maxLen - editDistance) / maxLen) * 100;
+[live demo badge] [MIT license badge] [built with Next.js badge]
 
+A high-performance typing application built for developers and CS students.
+Not lorem ipsum. Real code. Real syntax. Real difficulty.
 
-✅ Pros:
+## Why 0ms
 
-Very accurate reflection of human typing errors.
+Every typing app tests the same English words. 0ms tests what you actually type:
+JavaScript closures, Rust ownership syntax, SQL joins, Bash pipelines.
 
-Counts skipped, extra, and wrong characters fairly.
+Three difficulty modes ranked by cognitive load, not arbitrary levels:
+- **O(n)** — Common English. The baseline.
+- **O(log n)** — Real code snippets from open source projects.
+- **O(1)** — High-entropy strings. The Holy Grail.
 
-Used in advanced typing tests and code-judging systems.
+## Features
 
-❌ Cons:
+- Hidden input engine with zero perceptible latency
+- Inter-keystroke variance anti-cheat (statistical, not rule-based)
+- Real-time consistency graph showing your typing rhythm
+- Net WPM vs Raw WPM — because accuracy is part of speed
+- Error heatmap — know exactly which keys slow you down
+- Avatar State — triggered at 100 WPM + 97% accuracy
+- Dimensional rank tiers: [USER] → [SUDO] → [KERNEL] → [ROOT]
+- GitHub OAuth — the dev community's trust anchor
+- Real-time leaderboard per mode
+- Shadow banning for bots and paste-completers
 
-Slightly heavier computation (but trivial for JS).
+## Stack
 
-Might penalize “near-misses” harshly if you use a strict threshold.
+| Layer | Choice | Why |
+|---|---|---|
+| Frontend | Next.js 14 App Router | Server components + edge functions in one |
+| State | Zustand | Zero boilerplate, no re-render on hot path |
+| Database | Supabase | Postgres + Auth + Realtime, free tier self-sustaining |
+| Deployment | Vercel | Edge functions co-located with frontend |
 
-🟢 Verdict: ⭐ Best balance of fairness and realism.
-→ Great for your app’s leaderboard credibility.
+## Self-Hosting
+
+### Prerequisites
+- Node.js 18+
+- A Supabase project (free tier works)
+- A Vercel account (free tier works)
+- GitHub OAuth app
+
+### Setup
+
+1. Clone and install
+```bash
+   git clone https://github.com/yourusername/zeroms
+   cd zeroms
+   npm install
+```
+
+2. Copy environment variables
+```bash
+   cp .env.example .env.local
+   # Fill in your Supabase URL, anon key, service role key
+   # Add your GitHub OAuth credentials
+```
+
+3. Run the database schema
