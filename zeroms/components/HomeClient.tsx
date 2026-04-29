@@ -31,6 +31,7 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
   const endTime = useTypingStore((s) => s.endTime);
   const isTrusted = useTypingStore((s) => s.isTrusted);
   const tickTimer = useTypingStore((s) => s.tickTimer);
+  const tickCountdown = useTypingStore((s) => s.tickCountdown);
 
   const [result, setResult] = useState<TestResult | null>(null);
   const [guestMeta, setGuestMeta] = useState(() => ({ best: 0, totalTests: 0 }));
@@ -57,6 +58,12 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
       timerRef.current = null;
     };
   }, [status, timeMode, tickTimer]);
+
+  useEffect(() => {
+    if (status !== "countdown") return;
+    const id = window.setInterval(() => tickCountdown(), 1000);
+    return () => window.clearInterval(id);
+  }, [status, tickCountdown]);
 
   const computed = useMemo(() => {
     if (status !== "finished") return null;

@@ -18,6 +18,7 @@ const TIER_COLORS: Record<"USER" | "SUDO" | "KERNEL" | "ROOT", string> = {
 export function TerminalPrompt(props: { user: User | null; handle?: string | null }) {
   const stats = useTypingStats();
   const status = useTypingStore((s) => s.status);
+  const countdown = useTypingStore((s) => s.countdown);
   const timeRemaining = useTypingStore((s) => s.timeRemaining);
   const currentIndex = useTypingStore((s) => s.currentIndex);
 
@@ -81,6 +82,16 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
         <div className="mt-4 text-sm text-zinc-400">
           WPM: {stats.netWpm} | ACC: {stats.accuracy}% | {timeRemaining}s
         </div>
+        {status === "idle" && (
+          <div className="mt-2 text-xs text-zinc-600">
+            press Enter to start (typing is ignored until countdown ends)
+          </div>
+        )}
+        {status === "countdown" && (
+          <div className="mt-2 text-xl text-green-400">
+            starting in {countdown}...
+          </div>
+        )}
 
         <TypingEngine />
       </div>

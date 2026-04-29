@@ -5,6 +5,7 @@ Terminal-style typing benchmark for engineers: real syntax, anti-cheat, live lea
 ## Why 0ms
 
 Most typing apps train generic words. 0ms trains what developers actually type:
+
 - `O(n)`: common English baseline
 - `O(log n)`: realistic code snippets
 - `O(1)`: high-entropy strings and symbols
@@ -22,12 +23,12 @@ Most typing apps train generic words. 0ms trains what developers actually type:
 
 ## Stack
 
-| Layer | Choice | Why |
-|---|---|---|
-| App | Next.js App Router | Server + client composition, API routes |
-| State | Zustand | Fast, minimal hot-path store |
-| DB/Auth | Supabase | Postgres + Auth + Realtime |
-| Deploy | Vercel | Simple edge/server deployment + cron |
+| Layer   | Choice             | Why                                     |
+| ------- | ------------------ | --------------------------------------- |
+| App     | Next.js App Router | Server + client composition, API routes |
+| State   | Zustand            | Fast, minimal hot-path store            |
+| DB/Auth | Supabase           | Postgres + Auth + Realtime              |
+| Deploy  | Vercel             | Simple edge/server deployment + cron    |
 
 ## Self-hosting
 

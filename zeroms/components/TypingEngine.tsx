@@ -7,6 +7,7 @@ export function TypingEngine() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const status = useTypingStore((s) => s.status);
+  const beginCountdown = useTypingStore((s) => s.beginCountdown);
   const resetTest = useTypingStore((s) => s.resetTest);
   const handleBackspace = useTypingStore((s) => s.handleBackspace);
   const handleKeystroke = useTypingStore((s) => s.handleKeystroke);
@@ -45,6 +46,11 @@ export function TypingEngine() {
             resetTest();
             return;
           }
+          if (e.key === "Enter" && status === "idle") {
+            beginCountdown();
+            return;
+          }
+          if (status !== "running") return;
           if (e.key === "Backspace") {
             handleBackspace();
             return;

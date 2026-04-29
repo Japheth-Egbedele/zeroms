@@ -5,7 +5,7 @@ import { calculateSigma, sigmaToConsistency } from "@/lib/statsEngine";
 
 export type TimeMode = 15 | 30 | 60 | 120 | null;
 export type WordCountMode = 10 | 25 | 50 | 100 | null;
-export type TestStatus = "idle" | "running" | "finished";
+export type TestStatus = "idle" | "countdown" | "running" | "finished";
 
 export type KeyLogEntry = { char: string; timestamp: number; correct: boolean };
 export type WpmPoint = { second: number; wpm: number };
@@ -30,6 +30,7 @@ export interface TypingState {
   wpmTimeline: WpmPoint[];
   lastSnapshotSecond: number;
   isTrusted: boolean;
+  countdown: number | null;
 
   setMode: (mode: TestMode) => void;
   setTimeMode: (mode: Exclude<TimeMode, null>) => void;
@@ -38,6 +39,9 @@ export interface TypingState {
   handleKeystroke: (char: string, timestamp: number, trusted: boolean) => void;
   handleBackspace: () => void;
   tickTimer: () => void;
+  beginCountdown: () => void;
+  tickCountdown: () => void;
+  startTestRun: () => void;
   finishTest: () => void;
   resetTest: () => void;
 }
@@ -75,6 +79,7 @@ function defaults() {
     wpmTimeline: [],
     lastSnapshotSecond: 0,
     isTrusted: true,
+    countdown: null,
   };
 }
 
@@ -98,10 +103,10 @@ export const useTypingStore = create<TypingState>((set, get) => ({
 
   handleKeystroke(char, timestamp, trusted) {
     const s = get();
-    if (s.status === "finished") return;
+    if (s.status !== "running") return;
 
     const startTime = s.startTime ?? timestamp;
-    const status: TestStatus = s.status === "idle" ? "running" : s.status;
+    const status: TestStatus = s.status;
     const expected = s.chars[s.currentIndex] ?? "";
     const correct = char === expected;
 
@@ -144,7 +149,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
 
   handleBackspace() {
     const s = get();
-    if (s.currentIndex === 0 || s.status === "finished") return;
+    if (s.currentIndex === 0 || s.status !== "running") return;
 
     const nextIndex = s.currentIndex - 1;
     const typedChars = s.typedChars.slice(0, -1);
@@ -165,6 +170,44 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     } else {
       set({ timeRemaining: next });
     }
+  },
+
+  beginCountdown() {
+    const s = get();
+    if (s.status !== "idle") return;
+    set({ status: "countdown", countdown: 3 });
+  },
+
+  tickCountdown() {
+    const s = get();
+    if (s.status !== "countdown" || s.countdown == null) return;
+    if (s.countdown <= 1) {
+      get().startTestRun();
+      return;
+    }
+    set({ countdown: s.countdown - 1 });
+  },
+
+  startTestRun() {
+    const s = get();
+    if (s.status !== "countdown") return;
+    const prompt = getPrompt(s.mode, s.wordCountMode ?? undefined);
+    set({
+      prompt,
+      chars: prompt.split(""),
+      currentIndex: 0,
+      typedChars: [],
+      errors: new Set<number>(),
+      keyLog: [],
+      wpmTimeline: [],
+      lastSnapshotSecond: 0,
+      isTrusted: true,
+      countdown: null,
+      startTime: Date.now(),
+      endTime: null,
+      status: "running",
+      timeRemaining: s.timeMode ?? 30,
+    });
   },
 
   finishTest() {
@@ -195,6 +238,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
       wpmTimeline: [],
       lastSnapshotSecond: 0,
       isTrusted: true,
+      countdown: null,
     });
   },
 }));
