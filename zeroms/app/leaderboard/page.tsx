@@ -19,7 +19,7 @@ export default async function LeaderboardPage(props: {
   }
 
   const { data } = await supabase
-    .from("leaderboard_public")
+    .from("leaderboard_best_public")
     .select("*")
     .eq("mode", mode)
     .order("score", { ascending: false })
@@ -44,8 +44,8 @@ export default async function LeaderboardPage(props: {
         </a>
       </div>
 
-      <div className="text-zinc-600 text-sm mb-3">
-        # · Handle · [Tier] · WPM · ACC · Consistency · Score · Mode · Date
+      <div className="text-zinc-600 text-sm mb-4">
+        Best score per user · medals for top 3
       </div>
 
       <LeaderboardRealtime mode={mode} initialRows={initialRows} />

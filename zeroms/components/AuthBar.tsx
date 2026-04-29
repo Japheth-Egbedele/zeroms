@@ -79,39 +79,48 @@ export function AuthBar(props: {
 
   return (
     <div className="fixed top-6 right-8 z-50 text-sm font-mono select-none">
-      {!signedIn ? (
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-green-400 hover:underline"
-          onClick={signIn}
+      <div className="inline-flex items-center gap-4">
+        <a
+          href="/leaderboard"
+          className="text-zinc-600 hover:text-green-400 hover:underline"
         >
-          <GitHubMark />
-          <span>connect github</span>
-        </button>
-      ) : (
-        <div className="inline-flex items-center gap-3 text-zinc-400">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={handle}
-              className="w-6 h-6 rounded-full border border-zinc-700"
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-full border border-zinc-700 grid place-items-center text-[10px]">
-              <GitHubMark />
-            </div>
-          )}
-          <span className="text-green-400">@{handle}</span>
+          [leaderboard]
+        </a>
+
+        {!signedIn ? (
           <button
             type="button"
-            className="inline-flex items-center gap-1 hover:text-red-400 hover:underline"
-            onClick={signOut}
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-green-400 hover:underline"
+            onClick={signIn}
           >
             <GitHubMark />
-            <span>disconnect</span>
+            <span>connect github</span>
           </button>
-        </div>
-      )}
+        ) : (
+          <div className="inline-flex items-center gap-3 text-zinc-400">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={handle}
+                className="w-6 h-6 rounded-full border border-zinc-700"
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full border border-zinc-700 grid place-items-center text-[10px]">
+                <GitHubMark />
+              </div>
+            )}
+            <span className="text-green-400">@{handle}</span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 hover:text-red-400 hover:underline"
+              onClick={signOut}
+            >
+              <GitHubMark />
+              <span>disconnect</span>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

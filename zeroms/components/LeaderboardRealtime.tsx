@@ -15,6 +15,7 @@ export type LeaderboardRow = {
   accuracy: number;
   consistency: number | null;
   score: number | null;
+  duration_seconds?: number | null;
 };
 
 function tierClass(tier: string) {
@@ -48,7 +49,7 @@ export function LeaderboardRealtime(props: {
 
     async function refetch() {
       const { data } = await client
-        .from("leaderboard_public")
+        .from("leaderboard_best_public")
         .select("*")
         .eq("mode", props.mode)
         .order("score", { ascending: false })
@@ -79,19 +80,45 @@ export function LeaderboardRealtime(props: {
     };
   }, [supabase, props.mode]);
 
+  const cols =
+    "grid grid-cols-[40px_minmax(160px,1.2fr)_minmax(72px,0.6fr)_minmax(56px,0.4fr)_minmax(72px,0.5fr)_minmax(88px,0.6fr)_minmax(72px,0.6fr)_minmax(96px,0.8fr)] gap-x-3";
+
+  const medal = (i: number) => (i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`);
+
   return (
-    <div className="space-y-2 text-sm">
-      {rows.map((r, i) => (
-        <div key={r.id ?? i} className="text-zinc-400">
-          {String(i + 1).padStart(2, "0")} ·{" "}
-          <a className="text-green-400 hover:underline" href={`/profile/${r.handle}`}>
-            {r.handle}
-          </a>{" "}
-          · <span className={tierClass(r.rank_tier)}>[{r.rank_tier}]</span> · {r.wpm} ·{" "}
-          {Number(r.accuracy).toFixed(2)} · {r.consistency ?? "-"} · {r.score ?? "-"} · {r.mode} ·{" "}
-          {String(r.created_at).slice(0, 10)}
-        </div>
-      ))}
+    <div className="text-sm">
+      <div className={`${cols} text-zinc-600 mb-2`}>
+        <div>R</div>
+        <div>Handle</div>
+        <div>Tier</div>
+        <div>WPM</div>
+        <div>ACC</div>
+        <div>CONS</div>
+        <div>Score</div>
+        <div>Date</div>
+      </div>
+
+      <div className="space-y-1">
+        {rows.map((r, i) => (
+          <div
+            key={r.id ?? i}
+            className={`${cols} ${i % 2 === 0 ? "text-zinc-300" : "text-zinc-400"}`}
+          >
+            <div className="text-zinc-600">{medal(i)}</div>
+            <div className="truncate">
+              <a className="text-green-400 hover:underline" href={`/profile/${r.handle}`}>
+                {r.handle}
+              </a>
+            </div>
+            <div className={tierClass(r.rank_tier)}>[{r.rank_tier}]</div>
+            <div>{r.wpm}</div>
+            <div>{Number(r.accuracy).toFixed(2)}</div>
+            <div>{r.consistency ?? "-"}</div>
+            <div>{r.score ?? "-"}</div>
+            <div className="text-zinc-600">{String(r.created_at).slice(0, 10)}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
