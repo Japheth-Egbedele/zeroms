@@ -1,0 +1,86 @@
+export const WORDS_OLOGN: string[] = [
+  // JavaScript / TypeScript
+  "const xs = arr.filter(Boolean).map(x => x.id).slice(0, 10);",
+  "const byId = new Map(users.map(u => [u.id, u] as const));",
+  "await Promise.all(urls.map(u => fetch(u).then(r => r.json())));",
+  "const ok = /^[a-z0-9_-]{3,16}$/i.test(handle.trim());",
+  "const sum = nums.reduce((a, b) => a + b, 0) ?? 0;",
+  "for (const [k, v] of Object.entries(obj)) console.log(k, v);",
+  "const n = Number.parseInt(input, 10); if (!Number.isFinite(n)) throw n;",
+  "const res = await fetch('/api/x', { method: 'POST', body: JSON.stringify(p) });",
+  "type Tier = 'USER' | 'SUDO' | 'KERNEL' | 'ROOT';",
+  "const t = setTimeout(() => ctrl.abort(), 2500); try { await f(); } finally { clearTimeout(t); }",
+
+  // Python
+  "items = [x for x in xs if x and x.get('id') is not None]",
+  "data = {k: v for k, v in pairs if k and v is not None}",
+  "from collections import Counter; top = Counter(chars).most_common(3)",
+  "def clamp(x, lo, hi): return max(lo, min(hi, x))",
+  "import re; ok = bool(re.fullmatch(r\"[a-z0-9_-]{3,16}\", handle))",
+  "nums = list(map(int, line.split())); total = sum(nums) if nums else 0",
+  "with open(path, 'r', encoding='utf-8') as f: text = f.read()",
+  "try: v = int(s) \nexcept ValueError: v = 0",
+  "sorted_users = sorted(users, key=lambda u: (-u['score'], u['handle']))",
+  "from dataclasses import dataclass; @dataclass(frozen=True) class P: x:int; y:int",
+
+  // Rust
+  "let mut m: std::collections::HashMap<String, i32> = HashMap::new();",
+  "let ok = handle.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-');",
+  "let xs: Vec<_> = it.filter(|x| x.is_some()).map(|x| x.unwrap()).collect();",
+  "let s = input.trim().parse::<i64>().unwrap_or_default();",
+  "let v = vec![1, 2, 3]; let sum: i32 = v.iter().copied().sum();",
+  "let top = counts.iter().max_by_key(|(_, v)| *v).map(|(k, _)| k);",
+  "let chunk = bytes.get(i..i+16).unwrap_or(&[]);",
+  "match opt { Some(x) => println!(\"{}\", x), None => eprintln!(\"none\") }",
+  "let mut rng = rand::thread_rng(); xs.shuffle(&mut rng);",
+  "let t = std::time::Instant::now(); do_work(); eprintln!(\"{}\", t.elapsed().as_millis());",
+
+  // Go
+  "m := map[string]int{}; if _, ok := m[key]; !ok { m[key] = 1 }",
+  "ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second); defer cancel()",
+  "type Tier string; const (USER Tier = \"USER\"; ROOT Tier = \"ROOT\")",
+  "n, err := strconv.Atoi(strings.TrimSpace(s)); if err != nil { n = 0 }",
+  "sort.Slice(xs, func(i, j int) bool { return xs[i].Score > xs[j].Score })",
+  "b, _ := json.Marshal(payload); req, _ := http.NewRequest(\"POST\", url, bytes.NewReader(b))",
+  "for i, r := range s { if r == '\\n' { fmt.Println(i); break } }",
+  "if v, ok := m[id]; ok { fmt.Println(v) } else { fmt.Println(\"missing\") }",
+  "sum := 0; for _, n := range nums { sum += n }",
+  "defer func() { if r := recover(); r != nil { log.Println(\"panic\", r) } }()",
+
+  // C++
+  "std::vector<int> v{1,2,3}; int s = std::accumulate(v.begin(), v.end(), 0);",
+  "std::unordered_map<std::string,int> m; if (!m.count(k)) m[k] = 0;",
+  "auto it = std::find_if(v.begin(), v.end(), [](auto& x){ return x.id == id; });",
+  "std::sort(v.begin(), v.end(), [](auto& a, auto& b){ return a.score > b.score; });",
+  "std::string t = s.substr(0, std::min<size_t>(s.size(), 16));",
+  "if (n < 0 || n > 1000000) throw std::out_of_range(\"n\");",
+  "for (auto& [k, v] : m) std::cout << k << \":\" << v << \"\\n\";",
+  "std::optional<int> x = parse(s); if (x) use(*x);",
+  "std::unique_ptr<Node> p = std::make_unique<Node>(args);",
+  "constexpr int clamp(int x,int lo,int hi){ return x<lo?lo:(x>hi?hi:x); }",
+
+  // Bash
+  "set -euo pipefail; IFS=$'\\n\\t'; trap 'echo fail >&2' ERR",
+  "grep -R \"TODO\" -n src | awk -F: '{print $1\":\"$2}' | head -n 20",
+  "curl -sS \"$URL\" | jq -r '.items[] | .id' | sort -u | wc -l",
+  "for f in *.log; do tail -n 5 \"$f\" | sed -E 's/\\s+/ /g'; done",
+  "export NODE_ENV=production && npm run build && npm run start",
+  "if [[ -z \"${TOKEN:-}\" ]]; then echo \"missing\"; exit 1; fi",
+  "find . -maxdepth 2 -type f -name \"*.ts\" -print0 | xargs -0 wc -l",
+  "python -c 'import uuid; print(uuid.uuid4())' | tr -d '\\n'",
+  "git log --oneline --decorate --graph --max-count=10",
+  "openssl rand -base64 32 | tr -d '\\n' && echo",
+
+  // SQL
+  "select user_id, max(score) as best from leaderboard group by user_id order by best desc;",
+  "select * from leaderboard where is_shadowed = false order by score desc limit 100;",
+  "create index concurrently if not exists idx_lb_score on leaderboard (score desc);",
+  "update leaderboard set user_id = $1 where guest_token = $2 and user_id is null;",
+  "select handle, rank_tier from profiles where handle = $1 limit 1;",
+  "insert into leaderboard(user_id,wpm,accuracy,mode,score) values ($1,$2,$3,$4,$5);",
+  "select mode, count(*) from leaderboard group by mode order by count desc;",
+  "delete from leaderboard where created_at < now() - interval '90 days' and is_shadowed = true;",
+  "alter table leaderboard enable row level security;",
+  "create policy \"read_public\" on leaderboard for select using (is_shadowed = false);",
+];
+
