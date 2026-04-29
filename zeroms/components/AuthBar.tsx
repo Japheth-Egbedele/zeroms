@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 import { syncGuestTokenToCookie } from "@/lib/guestSession";
 
@@ -28,6 +29,7 @@ export function AuthBar(props: {
   const [signedIn, setSignedIn] = useState(props.initialSignedIn);
   const [handle, setHandle] = useState(props.initialHandle ?? "guest");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(props.initialAvatarUrl ?? null);
+  const pathname = usePathname();
 
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -80,12 +82,21 @@ export function AuthBar(props: {
   return (
     <div className="fixed top-6 right-8 z-50 text-sm font-mono select-none">
       <div className="inline-flex items-center gap-4">
-        <a
-          href="/leaderboard"
-          className="text-zinc-600 hover:text-green-400 hover:underline"
-        >
-          [leaderboard]
-        </a>
+        {pathname === "/leaderboard" ? (
+          <a
+            href="/"
+            className="text-zinc-600 hover:text-green-400 hover:underline"
+          >
+            [home]
+          </a>
+        ) : (
+          <a
+            href="/leaderboard"
+            className="text-zinc-600 hover:text-green-400 hover:underline"
+          >
+            [leaderboard]
+          </a>
+        )}
 
         {!signedIn ? (
           <button
