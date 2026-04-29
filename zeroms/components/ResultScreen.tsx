@@ -154,8 +154,6 @@ export function ResultScreen(props: {
         </div>
       )}
 
-      <div className="mt-6 text-sm text-zinc-600">tab to restart</div>
-
       <div className="mt-2 flex flex-wrap gap-4 text-sm">
         {props.user ? (
           <button
@@ -179,8 +177,14 @@ export function ResultScreen(props: {
           className="text-zinc-600 hover:text-green-400 hover:underline"
           onClick={props.onReset}
         >
-          restart
+          new test
         </button>
+      </div>
+
+      <div className="mt-6 text-xs text-zinc-600 max-w-2xl">
+        Net WPM counts only correct characters. Raw WPM counts everything typed. Accuracy is correctness.
+        Consistency is rhythm (lower timing variance). Burst is your best short window. Heatmap shows
+        which keys you missed most. Score weights speed and accuracy by difficulty.
       </div>
 
       {showNudge && (

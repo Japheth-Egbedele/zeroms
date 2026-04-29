@@ -73,18 +73,9 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
         {handle}@zeroms:~$ 
       </div>
 
-      <div className="mt-4 text-[color:var(--foreground)]">
-        <ModeSelector />
-        <div className="mt-6">
-          <CharacterMap />
-          <ConsistencyGraph />
-        </div>
-
-        <div className="mt-4 text-sm text-zinc-400">
-          WPM: {stats.netWpm} | ACC: {stats.accuracy}% | {timeRemaining}s
-        </div>
+      <div className="mt-2 text-[color:var(--foreground)]">
         {status === "idle" && (
-          <div className="mt-3 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               className="text-green-400 hover:underline text-sm"
@@ -98,12 +89,24 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
           </div>
         )}
         {status === "countdown" && (
-          <div className="mt-2 text-xl text-green-400">
+          <div className="text-xl text-green-400">
             starting in {countdown}...
           </div>
         )}
 
-        <TypingEngine />
+        <div className="mt-4">
+          <ModeSelector />
+          <div className="mt-6">
+            <CharacterMap />
+            <ConsistencyGraph />
+          </div>
+
+          <div className="mt-4 text-sm text-zinc-400">
+            WPM: {stats.netWpm} | ACC: {stats.accuracy}% | {timeRemaining}s
+          </div>
+
+          <TypingEngine />
+        </div>
       </div>
     </div>
   );
