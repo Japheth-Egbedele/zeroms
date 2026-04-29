@@ -19,6 +19,7 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
   const stats = useTypingStats();
   const status = useTypingStore((s) => s.status);
   const countdown = useTypingStore((s) => s.countdown);
+  const beginCountdown = useTypingStore((s) => s.beginCountdown);
   const timeRemaining = useTypingStore((s) => s.timeRemaining);
   const currentIndex = useTypingStore((s) => s.currentIndex);
 
@@ -83,8 +84,17 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
           WPM: {stats.netWpm} | ACC: {stats.accuracy}% | {timeRemaining}s
         </div>
         {status === "idle" && (
-          <div className="mt-2 text-xs text-zinc-600">
-            press Enter to start (typing is ignored until countdown ends)
+          <div className="mt-3 flex items-center gap-3">
+            <button
+              type="button"
+              className="text-green-400 hover:underline text-sm"
+              onClick={() => beginCountdown()}
+            >
+              [start]
+            </button>
+            <div className="text-xs text-zinc-600">
+              press Enter to start (typing is ignored until countdown ends)
+            </div>
           </div>
         )}
         {status === "countdown" && (
