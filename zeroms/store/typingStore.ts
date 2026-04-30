@@ -44,6 +44,7 @@ export interface TypingState {
   handleBackspace: () => void;
   tickTimer: () => void;
   beginCountdown: () => void;
+  cancelCountdown: () => void;
   tickCountdown: () => void;
   startTestRun: () => void;
   finishTest: () => void;
@@ -198,6 +199,12 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     const s = get();
     if (s.status !== "idle") return;
     set({ status: "countdown", countdown: 3 });
+  },
+
+  cancelCountdown() {
+    const s = get();
+    if (s.status !== "countdown") return;
+    set({ status: "idle", countdown: null });
   },
 
   tickCountdown() {

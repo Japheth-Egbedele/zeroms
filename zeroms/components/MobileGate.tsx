@@ -21,8 +21,9 @@ export function MobileGate(props: { children: React.ReactNode }) {
       <div className="min-h-screen bg-black text-red-500 font-mono flex items-center justify-center px-6">
         <div className="text-center space-y-2">
           <div>ERROR: I/O Hardware Mismatch</div>
-          <div>STDIN must be a physical HID.</div>
-          <div>Connect a mechanical keyboard and return on Desktop.</div>
+          <div>Route: / (typing terminal)</div>
+          <div>Requirement: physical keyboard input.</div>
+          <div>Action: open on Desktop or connect a keyboard.</div>
         </div>
       </div>
     );

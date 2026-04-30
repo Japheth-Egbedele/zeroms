@@ -8,6 +8,7 @@ export function TypingEngine() {
 
   const status = useTypingStore((s) => s.status);
   const beginCountdown = useTypingStore((s) => s.beginCountdown);
+  const cancelCountdown = useTypingStore((s) => s.cancelCountdown);
   const resetTest = useTypingStore((s) => s.resetTest);
   const handleBackspace = useTypingStore((s) => s.handleBackspace);
   const handleKeystroke = useTypingStore((s) => s.handleKeystroke);
@@ -42,10 +43,17 @@ export function TypingEngine() {
         return;
       }
 
-      if (e.key === "Enter" && status === "idle") {
-        e.preventDefault();
-        beginCountdown();
-        return;
+      if (e.key === "Enter") {
+        if (status === "idle") {
+          e.preventDefault();
+          beginCountdown();
+          return;
+        }
+        if (status === "countdown") {
+          e.preventDefault();
+          cancelCountdown();
+          return;
+        }
       }
 
       if (status !== "running") return;
@@ -64,7 +72,7 @@ export function TypingEngine() {
 
     window.addEventListener("keydown", onKeyDown, { capture: true });
     return () => window.removeEventListener("keydown", onKeyDown, { capture: true } as any);
-  }, [status, beginCountdown, resetTest, handleBackspace, handleKeystroke]);
+  }, [status, beginCountdown, cancelCountdown, resetTest, handleBackspace, handleKeystroke]);
 
   return (
     <div
@@ -85,9 +93,15 @@ export function TypingEngine() {
             resetTest();
             return;
           }
-          if (e.key === "Enter" && status === "idle") {
-            beginCountdown();
-            return;
+          if (e.key === "Enter") {
+            if (status === "idle") {
+              beginCountdown();
+              return;
+            }
+            if (status === "countdown") {
+              cancelCountdown();
+              return;
+            }
           }
           if (status !== "running") return;
           if (e.key === "Backspace") {

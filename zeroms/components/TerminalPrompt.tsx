@@ -20,6 +20,7 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
   const status = useTypingStore((s) => s.status);
   const countdown = useTypingStore((s) => s.countdown);
   const beginCountdown = useTypingStore((s) => s.beginCountdown);
+  const cancelCountdown = useTypingStore((s) => s.cancelCountdown);
   const typingFontPx = useTypingStore((s) => s.typingFontPx);
   const timeRemaining = useTypingStore((s) => s.timeRemaining);
   const currentIndex = useTypingStore((s) => s.currentIndex);
@@ -75,17 +76,23 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
       </div>
 
       <div className="mt-2 text-[color:var(--foreground)]">
-        {status === "idle" && (
+        {(status === "idle" || status === "countdown") && (
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="text-green-400 hover:underline text-sm"
-              onClick={() => beginCountdown()}
+              className={
+                status === "countdown"
+                  ? "text-red-400 hover:underline text-sm"
+                  : "text-green-400 hover:underline text-sm"
+              }
+              onClick={() =>
+                status === "countdown" ? cancelCountdown() : beginCountdown()
+              }
             >
-              [start]
+              {status === "countdown" ? "[stop]" : "[start]"}
             </button>
             <div className="text-xs text-zinc-600">
-              press Enter to start (typing is ignored until countdown ends)
+              press Enter to {status === "countdown" ? "stop" : "start"} (typing is ignored until countdown ends)
             </div>
           </div>
         )}
