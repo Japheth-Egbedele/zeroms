@@ -36,9 +36,22 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
   const [result, setResult] = useState<TestResult | null>(null);
   const [guestMeta, setGuestMeta] = useState(() => ({ best: 0, totalTests: 0 }));
   const [uiReady, setUiReady] = useState(false);
+  const [top5Open, setTop5Open] = useState(false);
+  const [top5Rows, setTop5Rows] = useState<
+    Array<{
+      rn: number;
+      created_at: string;
+      wpm: number;
+      accuracy: number;
+      score: number;
+    }>
+  >([]);
+  const [top5Loading, setTop5Loading] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const didSubmitRef = useRef(false);
+  const didAutoSaveRef = useRef(false);
+  const top5CacheRef = useRef<{ mode: string; rows: typeof top5Rows } | null>(null);
 
   useEffect(() => {
     resetTest();
@@ -83,6 +96,7 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
   useEffect(() => {
     if (status !== "finished") {
       didSubmitRef.current = false;
+      didAutoSaveRef.current = false;
       setResult(null);
       return;
     }
@@ -91,6 +105,35 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
     saveGuestTest(computed);
     setGuestMeta({ best: getGuestBest(), ...getGuestTotals() });
   }, [status, computed]);
+
+  useEffect(() => {
+    if (status !== "finished") return;
+    if (!computed) return;
+    if (!props.user) return;
+    if (didAutoSaveRef.current) return;
+
+    // Quality gate (balanced)
+    if (computed.netWpm < 30) return;
+    if (computed.accuracy < 90) return;
+
+    void (async () => {
+      try {
+        const res = await fetch(`/api/me/top5?mode=${encodeURIComponent(computed.mode)}`);
+        const json: unknown = await res.json();
+        const rows = (json as { rows?: Array<{ score?: number | null }> }).rows ?? [];
+
+        const currentFifth = rows.length >= 5 ? rows[4]?.score ?? null : null;
+        const qualifies = rows.length < 5 || (currentFifth !== null && computed.score > currentFifth);
+        if (!qualifies) return;
+
+        didAutoSaveRef.current = true;
+        await submitScore(computed);
+        top5CacheRef.current = null;
+      } catch {
+        // ignore network errors; user can still manual-save
+      }
+    })();
+  }, [status, computed, props.user]);
 
   async function submitScore(r: TestResult) {
     if (didSubmitRef.current) return;
@@ -136,6 +179,32 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
   }
 
   const showGuestStats = !props.user && guestMeta.totalTests > 0;
+  const showTop5 = !!props.user;
+
+  useEffect(() => {
+    if (!showTop5) return;
+    if (!top5Open) return;
+    if (!uiReady) return;
+
+    const cached = top5CacheRef.current;
+    if (cached?.mode === mode && cached.rows.length > 0) {
+      setTop5Rows(cached.rows);
+      return;
+    }
+
+    void (async () => {
+      setTop5Loading(true);
+      try {
+        const res = await fetch(`/api/me/top5?mode=${encodeURIComponent(mode)}`);
+        const json: unknown = await res.json();
+        const rows = (json as { rows?: typeof top5Rows }).rows ?? [];
+        setTop5Rows(rows);
+        top5CacheRef.current = { mode, rows };
+      } finally {
+        setTop5Loading(false);
+      }
+    })();
+  }, [showTop5, top5Open, mode, uiReady]);
 
   if (result) {
     return (
@@ -156,6 +225,35 @@ export function HomeClient(props: { user: User | null; handle?: string | null })
         <TerminalPrompt user={props.user} handle={props.handle ?? null} />
       ) : (
         <div className="text-zinc-600 text-sm">…</div>
+      )}
+      {showTop5 && (
+        <div className="mt-6 text-zinc-400 text-sm">
+          <button
+            type="button"
+            className="hover:text-zinc-200"
+            onClick={() => setTop5Open((v) => !v)}
+          >
+            your best 5 {top5Open ? "▴" : "▾"}
+          </button>
+          {top5Open && (
+            <div className="mt-2 text-zinc-500">
+              {top5Loading ? (
+                <div>loading…</div>
+              ) : top5Rows.length === 0 ? (
+                <div>no saved runs yet.</div>
+              ) : (
+                <div className="space-y-1">
+                  {top5Rows.map((r) => (
+                    <div key={r.rn} className="font-mono">
+                      #{r.rn} · {Math.round(r.wpm)}wpm · {Math.round(r.accuracy)}% ·{" "}
+                      {Math.round(r.score)} · {new Date(r.created_at).toLocaleDateString()}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
       {showGuestStats && (
         <div className="mt-6 text-zinc-400 text-sm">
