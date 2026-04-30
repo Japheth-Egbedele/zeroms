@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
 import { syncGuestTokenToCookie } from "@/lib/guestSession";
+import { useTypingStore } from "@/store/typingStore";
 
 function GitHubMark() {
   return (
@@ -32,6 +33,13 @@ export function AuthBar(props: {
   const pathname = usePathname();
 
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const typingFontPx = useTypingStore((s) => s.typingFontPx);
+  const setTypingFontPx = useTypingStore((s) => s.setTypingFontPx);
+  const hydrateTypingFont = useTypingStore((s) => s.hydrateTypingFont);
+
+  useEffect(() => {
+    hydrateTypingFont();
+  }, [hydrateTypingFont]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -97,6 +105,20 @@ export function AuthBar(props: {
             [leaderboard]
           </a>
         )}
+
+        <div className="inline-flex items-center gap-2 text-zinc-600">
+          <span className="hidden sm:inline">font</span>
+          <input
+            aria-label="typing-font-size"
+            type="range"
+            min={14}
+            max={28}
+            value={typingFontPx}
+            onChange={(e) => setTypingFontPx(Number(e.target.value))}
+            className="w-24 accent-green-400"
+          />
+          <span className="w-8 text-right tabular-nums">{typingFontPx}</span>
+        </div>
 
         {!signedIn ? (
           <button

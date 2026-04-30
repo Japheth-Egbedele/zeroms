@@ -7,6 +7,7 @@ export function CharacterMap() {
   const chars = useTypingStore((s) => s.chars);
   const currentIndex = useTypingStore((s) => s.currentIndex);
   const errors = useTypingStore((s) => s.errors);
+  const typingFontPx = useTypingStore((s) => s.typingFontPx);
 
   const spans = useMemo(() => {
     return chars.map((ch, i) => {
@@ -32,7 +33,10 @@ export function CharacterMap() {
   }, [chars, currentIndex, errors]);
 
   return (
-    <div className="font-mono text-xl leading-loose flex flex-wrap gap-0">
+    <div
+      className="font-mono flex flex-wrap gap-0 break-words"
+      style={{ fontSize: `${typingFontPx}px`, lineHeight: 1.8 }}
+    >
       {spans}
     </div>
   );

@@ -20,6 +20,7 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
   const status = useTypingStore((s) => s.status);
   const countdown = useTypingStore((s) => s.countdown);
   const beginCountdown = useTypingStore((s) => s.beginCountdown);
+  const typingFontPx = useTypingStore((s) => s.typingFontPx);
   const timeRemaining = useTypingStore((s) => s.timeRemaining);
   const currentIndex = useTypingStore((s) => s.currentIndex);
 
@@ -89,14 +90,17 @@ export function TerminalPrompt(props: { user: User | null; handle?: string | nul
           </div>
         )}
         {status === "countdown" && (
-          <div className="text-xl text-green-400">
+          <div
+            className="text-green-400"
+            style={{ fontSize: `${typingFontPx}px`, lineHeight: 1.4 }}
+          >
             starting in {countdown}...
           </div>
         )}
 
         <div className="mt-4">
           <ModeSelector />
-          <div className="mt-6">
+          <div className="mt-6 max-h-[52vh] overflow-hidden">
             <CharacterMap />
             <ConsistencyGraph />
           </div>

@@ -44,6 +44,17 @@ export default async function RootLayout({
           initialHandle={initialHandle}
           initialAvatarUrl={avatarUrl}
         />
+        <div className="fixed bottom-6 left-8 z-40 text-xs text-zinc-600 font-mono">
+          dev by{" "}
+          <a
+            className="text-zinc-400 hover:text-green-400 hover:underline"
+            href="https://japheth-egbedele.vercel.app/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            JOE
+          </a>
+        </div>
         {children}
       </body>
     </html>

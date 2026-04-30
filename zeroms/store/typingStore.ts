@@ -15,6 +15,8 @@ export interface TypingState {
   timeMode: TimeMode;
   wordCountMode: WordCountMode;
 
+  typingFontPx: number;
+
   prompt: string;
   chars: string[];
   currentIndex: number;
@@ -35,6 +37,8 @@ export interface TypingState {
   setMode: (mode: TestMode) => void;
   setTimeMode: (mode: Exclude<TimeMode, null>) => void;
   setWordCountMode: (mode: Exclude<WordCountMode, null>) => void;
+  setTypingFontPx: (px: number) => void;
+  hydrateTypingFont: () => void;
 
   handleKeystroke: (char: string, timestamp: number, trusted: boolean) => void;
   handleBackspace: () => void;
@@ -66,6 +70,7 @@ function defaults() {
     mode: "On" as const,
     timeMode: 30 as const,
     wordCountMode: null as WordCountMode,
+    typingFontPx: 20,
     prompt,
     chars: prompt.split(""),
     currentIndex: 0,
@@ -99,6 +104,23 @@ export const useTypingStore = create<TypingState>((set, get) => ({
   setWordCountMode(mode) {
     set({ wordCountMode: mode, timeMode: null });
     get().resetTest();
+  },
+
+  setTypingFontPx(px) {
+    const v = Math.max(14, Math.min(28, Math.round(px)));
+    set({ typingFontPx: v });
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("zeroms_typing_font_px", String(v));
+    }
+  },
+
+  hydrateTypingFont() {
+    if (typeof window === "undefined") return;
+    const raw = window.localStorage.getItem("zeroms_typing_font_px");
+    const n = raw ? Number(raw) : NaN;
+    if (!Number.isFinite(n)) return;
+    const v = Math.max(14, Math.min(28, Math.round(n)));
+    set({ typingFontPx: v });
   },
 
   handleKeystroke(char, timestamp, trusted) {

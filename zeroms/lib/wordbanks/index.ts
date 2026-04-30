@@ -4,7 +4,8 @@ import { WORDS_O1 } from "./mode-O1";
 
 export type TestMode = "On" | "Ologn" | "O1";
 
-let lastSequenceSignature: string | null = null;
+const recentSignatures: string[] = [];
+const RECENT_LIMIT = 8;
 
 function pickBank(mode: TestMode): string[] {
   switch (mode) {
@@ -51,12 +52,13 @@ export function getPrompt(mode: TestMode, wordCount?: number): string {
   const baseSeed =
     (Date.now() ^ Math.floor(Math.random() * 2 ** 31)) >>> 0;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
+  for (let attempt = 0; attempt < 20; attempt++) {
     const shuffled = shuffleCopy(bank, baseSeed + attempt * 101);
     const slice = shuffled.slice(0, Math.min(count, shuffled.length));
     const sig = signature(slice, slice.length);
-    if (sig !== lastSequenceSignature) {
-      lastSequenceSignature = sig;
+    if (!recentSignatures.includes(sig)) {
+      recentSignatures.unshift(sig);
+      if (recentSignatures.length > RECENT_LIMIT) recentSignatures.length = RECENT_LIMIT;
       return slice.join(" ");
     }
   }
@@ -64,7 +66,9 @@ export function getPrompt(mode: TestMode, wordCount?: number): string {
   // Fallback: accept repeat if RNG is very unlucky.
   const shuffled = shuffleCopy(bank, baseSeed ^ 0x9e3779b9);
   const slice = shuffled.slice(0, Math.min(count, shuffled.length));
-  lastSequenceSignature = signature(slice, slice.length);
+  const sig = signature(slice, slice.length);
+  recentSignatures.unshift(sig);
+  if (recentSignatures.length > RECENT_LIMIT) recentSignatures.length = RECENT_LIMIT;
   return slice.join(" ");
 }
 
