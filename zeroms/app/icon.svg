@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="0.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="32" height="32" rx="6" fill="#0a0a0a"/>
+  <rect x="1" y="1" width="30" height="30" rx="5.2" fill="none" stroke="#00ff41" stroke-width="0.4" opacity="0.25"/>
+
+  <text
+    x="9"
+    y="22"
+    font-family="'Courier New', Courier, monospace"
+    font-size="18"
+    font-weight="700"
+    fill="#00ff41"
+    filter="url(#glow)"
+    letter-spacing="-1"
+  >0</text>
+
+  <rect x="20" y="8" width="5" height="8" rx="0.5" fill="#00ff41" opacity="0.9" filter="url(#glow)"/>
+  <rect x="20" y="17.5" width="5" height="1.2" rx="0.3" fill="#00ff41" opacity="0.3"/>
+</svg>
+

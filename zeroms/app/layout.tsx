@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { AuthBar } from "@/components/AuthBar";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -44,6 +45,7 @@ export default async function RootLayout({
           initialHandle={initialHandle}
           initialAvatarUrl={avatarUrl}
         />
+        <FeedbackWidget />
         <div className="fixed bottom-6 left-8 z-40 text-xs text-zinc-600 font-mono">
           dev by{" "}
           <a
